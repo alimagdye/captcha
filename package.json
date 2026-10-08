@@ -1,0 +1,30 @@
+{
+  "name": "captcha-rotation-puzzle",
+  "version": "1.0.0",
+  "description": "Standalone circular rotation CAPTCHA puzzle component",
+  "main": "dist/captcha.umd.js",
+  "module": "dist/captcha.es.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "captcha",
+    "rotation-puzzle",
+    "slider",
+    "verification"
+  ],
+  "author": "Ali Magdy",
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^26.0.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.7"
+  }
+}
