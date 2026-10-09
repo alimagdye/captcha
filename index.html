@@ -342,7 +342,12 @@ const captcha = createCaptcha({
       logPanel.scrollTop = logPanel.scrollHeight;
     }
 
-    launchBtn.addEventListener('click', () => {
+    function openCaptcha() {
+      // If modal is already open, do not open duplicate
+      if (document.querySelector('.TUXModal.captcha-verify-container')) {
+        return;
+      }
+
       let imageList = [];
       const choice = imageSelect.value;
       if (choice === 'botanical') imageList = [BOTANICAL_PUZZLE_SVG];
@@ -368,7 +373,16 @@ const captcha = createCaptcha({
           addLog('info', 'CAPTCHA modal dismissed.');
         }
       });
-    });
+    }
+
+    launchBtn.addEventListener('click', openCaptcha);
+
+    // Open the CAPTCHA modal automatically on first load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', openCaptcha);
+    } else {
+      openCaptcha();
+    }
   </script>
 </body>
 </html>
