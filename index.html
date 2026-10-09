@@ -1,388 +1,475 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Standalone Rotation Puzzle CAPTCHA Demo</title>
-  <link rel="stylesheet" href="./src/styles.css">
-  <style>
-    :root {
-      --bg-color: #121214;
-      --card-bg: #1c1d22;
-      --border-color: #2e3038;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --accent: #22c55e;
-      --accent-hover: #16a34a;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Standalone Rotation Puzzle CAPTCHA Demo</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+    <style>
+      :root {
+        --bg-color: #121214;
+        --card-bg: #1c1d22;
+        --border-color: #2e3038;
+        --text-main: #f3f4f6;
+        --text-muted: #9ca3af;
+        --accent: #22c55e;
+        --accent-hover: #16a34a;
+      }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 32px 20px;
-    }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 32px 20px;
+      }
 
-    .container {
-      max-width: 840px;
-      width: 100%;
-    }
+      .container {
+        max-width: 840px;
+        width: 100%;
+      }
 
-    header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+      header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
 
-    h1 {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 8px;
-      color: #ffffff;
-    }
+      h1 {
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+        color: #ffffff;
+      }
 
-    p.subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
+      p.subtitle {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
 
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-
-    @media (max-width: 768px) {
       .main-grid {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
       }
-    }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    }
+      @media (max-width: 768px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .card h2 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      }
 
-    .btn-launch {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      background: #2563eb;
-      color: #ffffff;
-      border: none;
-      padding: 13px 20px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.15s ease, transform 0.1s ease;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-    }
+      .card h2 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    .btn-launch:hover {
-      background: #1d4ed8;
-    }
+      .btn-launch {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+        padding: 13px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background-color 0.15s ease,
+          transform 0.1s ease;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+      }
 
-    .btn-launch:active {
-      transform: scale(0.98);
-    }
+      .btn-launch:hover {
+        background: #1d4ed8;
+      }
 
-    .form-group {
-      margin-top: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+      .btn-launch:active {
+        transform: scale(0.98);
+      }
 
-    .form-group label {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+      .form-group {
+        margin-top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
 
-    .form-group select,
-    .form-group input {
-      background: #26272e;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      color: #ffffff;
-      padding: 8px 12px;
-      font-size: 13px;
-      outline: none;
-    }
+      .form-group label {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
 
-    .form-group select:focus,
-    .form-group input:focus {
-      border-color: #3b82f6;
-    }
+      .form-group select,
+      .form-group input {
+        background: #26272e;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: #ffffff;
+        padding: 8px 12px;
+        font-size: 13px;
+        outline: none;
+      }
 
-    .log-panel {
-      height: 230px;
-      overflow-y: auto;
-      background: #151619;
-      border: 1px solid #23252c;
-      border-radius: 8px;
-      padding: 12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      color: #d1d5db;
-    }
+      .form-group select:focus,
+      .form-group input:focus {
+        border-color: #3b82f6;
+      }
 
-    .log-item {
-      margin-bottom: 4px;
-      display: flex;
-      gap: 8px;
-    }
+      .log-panel {
+        height: 230px;
+        overflow-y: auto;
+        background: #151619;
+        border: 1px solid #23252c;
+        border-radius: 8px;
+        padding: 12px;
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #d1d5db;
+      }
 
-    .log-time {
-      color: #6b7280;
-    }
+      .log-item {
+        margin-bottom: 4px;
+        display: flex;
+        gap: 8px;
+      }
 
-    .log-success {
-      color: #4ade80;
-    }
+      .log-time {
+        color: #6b7280;
+      }
 
-    .log-fail {
-      color: #f87171;
-    }
+      .log-success {
+        color: #4ade80;
+      }
 
-    .log-info {
-      color: #60a5fa;
-    }
+      .log-fail {
+        color: #f87171;
+      }
 
-    .checklist-card {
-      margin-top: 16px;
-    }
+      .log-info {
+        color: #60a5fa;
+      }
 
-    .checklist {
-      list-style: none;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
-    }
+      .checklist-card {
+        margin-top: 16px;
+      }
 
-    @media (max-width: 600px) {
       .checklist {
-        grid-template-columns: 1fr;
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 16px;
       }
-    }
 
-    .checklist li {
-      font-size: 13px;
-      color: #d1d5db;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+      @media (max-width: 600px) {
+        .checklist {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .check-icon {
-      color: #22c55e;
-      font-size: 14px;
-      font-weight: bold;
-    }
+      .checklist li {
+        font-size: 13px;
+        color: #d1d5db;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    .code-preview {
-      margin-top: 24px;
-      background: #18191e;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      font-family: ui-monospace, monospace;
-      font-size: 12.5px;
-      color: #93c5fd;
-      overflow-x: auto;
-      white-space: pre;
-    }
-  </style>
-</head>
-<body>
+      .check-icon {
+        color: #22c55e;
+        font-size: 14px;
+        font-weight: bold;
+      }
 
-  <div class="container">
-    <header>
-      <h1>Rotation Puzzle CAPTCHA Component</h1>
-      <p class="subtitle">
-        Self-contained, accessible circular rotation verification matching visual specification.<br>
-        Exact DOM classes: <code>TUXModal</code>, <code>captcha-verify-container</code>, <code>captcha_close_button</code>.
-      </p>
-    </header>
+      .code-preview {
+        margin-top: 24px;
+        background: #18191e;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        font-family: ui-monospace, monospace;
+        font-size: 12.5px;
+        color: #93c5fd;
+        overflow-x: auto;
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Rotation Puzzle CAPTCHA Component</h1>
+        <p class="subtitle">
+          Self-contained, accessible circular rotation verification matching
+          visual specification.<br />
+          Exact DOM classes: <code>TUXModal</code>,
+          <code>captcha-verify-container</code>,
+          <code>captcha_close_button</code>.
+        </p>
+      </header>
 
-    <div class="main-grid">
-      <!-- Launch & Configuration Card -->
-      <div class="card">
-        <h2>Interactive Controls</h2>
+      <div class="main-grid">
+        <!-- Launch & Configuration Card -->
+        <div class="card">
+          <h2>Interactive Controls</h2>
 
-        <button id="launchBtn" class="btn-launch" type="button">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          Open Verification CAPTCHA
-        </button>
+          <button id="launchBtn" class="btn-launch" type="button">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Open Verification CAPTCHA
+          </button>
 
-        <div class="form-group">
-          <label for="imageSelect">Image Theme:</label>
-          <select id="imageSelect">
-            <option value="all">All Themes (Botanical Still Life, Landscape, Architecture)</option>
-            <option value="botanical">Botanical Still Life (Reference Match)</option>
-            <option value="landscape">Alpine Landscape</option>
-            <option value="architecture">Modern Architecture</option>
-          </select>
+          <div class="form-group">
+            <label for="imageSelect">Image Theme:</label>
+            <select id="imageSelect">
+              <option value="all">
+                All Themes (Botanical Still Life, Landscape, Architecture)
+              </option>
+              <option value="botanical">
+                Botanical Still Life (Reference Match)
+              </option>
+              <option value="landscape">Alpine Landscape</option>
+              <option value="architecture">Modern Architecture</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="toleranceInput"
+              >Angular Tolerance: <span id="toleranceVal">3</span>°</label
+            >
+            <input
+              type="range"
+              id="toleranceInput"
+              min="1"
+              max="8"
+              value="3"
+              step="0.5"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="delayInput"
+              >Auto-Close Delay: <span id="delayVal">280</span> ms</label
+            >
+            <input
+              type="range"
+              id="delayInput"
+              min="100"
+              max="1000"
+              value="280"
+              step="20"
+            />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="toleranceInput">Angular Tolerance: <span id="toleranceVal">3</span>°</label>
-          <input type="range" id="toleranceInput" min="1" max="8" value="3" step="0.5">
-        </div>
-
-        <div class="form-group">
-          <label for="delayInput">Auto-Close Delay: <span id="delayVal">280</span> ms</label>
-          <input type="range" id="delayInput" min="100" max="1000" value="280" step="20">
-        </div>
-      </div>
-
-      <!-- Live Event Log Card -->
-      <div class="card">
-        <h2>Verification Activity Log</h2>
-        <div id="logPanel" class="log-panel">
-          <div class="log-item">
-            <span class="log-time">[ready]</span>
-            <span class="log-info">Ready to verify. Click "Open Verification CAPTCHA" to test.</span>
+        <!-- Live Event Log Card -->
+        <div class="card">
+          <h2>Verification Activity Log</h2>
+          <div id="logPanel" class="log-panel">
+            <div class="log-item">
+              <span class="log-time">[ready]</span>
+              <span class="log-info"
+                >Ready to verify. Click "Open Verification CAPTCHA" to
+                test.</span
+              >
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Verification Checklist Card -->
+      <div class="card checklist-card">
+        <h2>Specification Verification Checklist</h2>
+        <ul class="checklist">
+          <li>
+            <span class="check-icon">✓</span> 380px wide centered dark modal
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Static outer ring, independent
+            rotating center
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Smooth high-DPI canvas composition
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Accessible capsule slider with
+            right-arrow thumb
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Normalized 0–360° circular
+            wrap-around math
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Randomized initial starting
+            rotation
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Close button with
+            id="captcha_close_button"
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Full keyboard navigation (Arrows,
+            Enter, Escape)
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Touch & pointer drag with pointer
+            capture
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Audio & Refresh controls in footer
+          </li>
+          <li>
+            <span class="check-icon">✓</span> Required TUXModal and utility
+            classes
+          </li>
+          <li>
+            <span class="check-icon">✓</span> 100% self-contained with offline
+            vector assets
+          </li>
+        </ul>
+      </div>
+
+      <!-- Usage Code Sample -->
+      <div class="code-preview">
+        // Quick Usage Example import { createCaptcha } from './src/index';
+        const captcha = createCaptcha({ tolerance: 3, // degrees onSuccess: ({
+        puzzleId, timeTakenMs }) => { console.log(`Verified puzzle ${puzzleId}
+        in ${timeTakenMs}ms`); }, onClose: () => { console.log('User closed
+        modal'); } });
+      </div>
     </div>
 
-    <!-- Verification Checklist Card -->
-    <div class="card checklist-card">
-      <h2>Specification Verification Checklist</h2>
-      <ul class="checklist">
-        <li><span class="check-icon">✓</span> 380px wide centered dark modal</li>
-        <li><span class="check-icon">✓</span> Static outer ring, independent rotating center</li>
-        <li><span class="check-icon">✓</span> Smooth high-DPI canvas composition</li>
-        <li><span class="check-icon">✓</span> Accessible capsule slider with right-arrow thumb</li>
-        <li><span class="check-icon">✓</span> Normalized 0–360° circular wrap-around math</li>
-        <li><span class="check-icon">✓</span> Randomized initial starting rotation</li>
-        <li><span class="check-icon">✓</span> Close button with id="captcha_close_button"</li>
-        <li><span class="check-icon">✓</span> Full keyboard navigation (Arrows, Enter, Escape)</li>
-        <li><span class="check-icon">✓</span> Touch & pointer drag with pointer capture</li>
-        <li><span class="check-icon">✓</span> Audio & Refresh controls in footer</li>
-        <li><span class="check-icon">✓</span> Required TUXModal and utility classes</li>
-        <li><span class="check-icon">✓</span> 100% self-contained with offline vector assets</li>
-      </ul>
-    </div>
+    <script type="module">
+      import {
+        createCaptcha,
+        BOTANICAL_PUZZLE_SVG,
+        LANDSCAPE_PUZZLE_SVG,
+        ARCHITECTURE_PUZZLE_SVG,
+      } from "./src/index";
 
-    <!-- Usage Code Sample -->
-    <div class="code-preview">// Quick Usage Example
-import { createCaptcha } from './src/index';
+      const launchBtn = document.getElementById("launchBtn");
+      const imageSelect = document.getElementById("imageSelect");
+      const toleranceInput = document.getElementById("toleranceInput");
+      const toleranceVal = document.getElementById("toleranceVal");
+      const delayInput = document.getElementById("delayInput");
+      const delayVal = document.getElementById("delayVal");
+      const logPanel = document.getElementById("logPanel");
 
-const captcha = createCaptcha({
-  tolerance: 3, // degrees
-  onSuccess: ({ puzzleId, timeTakenMs }) => {
-    console.log(`Verified puzzle ${puzzleId} in ${timeTakenMs}ms`);
-  },
-  onClose: () => {
-    console.log('User closed modal');
-  }
-});</div>
-  </div>
+      toleranceInput.addEventListener("input", () => {
+        toleranceVal.textContent = toleranceInput.value;
+      });
 
-  <script type="module">
-    import { createCaptcha, BOTANICAL_PUZZLE_SVG, LANDSCAPE_PUZZLE_SVG, ARCHITECTURE_PUZZLE_SVG } from './src/index';
+      delayInput.addEventListener("input", () => {
+        delayVal.textContent = delayInput.value;
+      });
 
-    const launchBtn = document.getElementById('launchBtn');
-    const imageSelect = document.getElementById('imageSelect');
-    const toleranceInput = document.getElementById('toleranceInput');
-    const toleranceVal = document.getElementById('toleranceVal');
-    const delayInput = document.getElementById('delayInput');
-    const delayVal = document.getElementById('delayVal');
-    const logPanel = document.getElementById('logPanel');
-
-    toleranceInput.addEventListener('input', () => {
-      toleranceVal.textContent = toleranceInput.value;
-    });
-
-    delayInput.addEventListener('input', () => {
-      delayVal.textContent = delayInput.value;
-    });
-
-    function addLog(type, message) {
-      const time = new Date().toLocaleTimeString();
-      const div = document.createElement('div');
-      div.className = 'log-item';
-      div.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-${type}">${message}</span>`;
-      logPanel.appendChild(div);
-      logPanel.scrollTop = logPanel.scrollHeight;
-    }
-
-    function openCaptcha() {
-      // If modal is already open, do not open duplicate
-      if (document.querySelector('.TUXModal.captcha-verify-container')) {
-        return;
+      function addLog(type, message) {
+        const time = new Date().toLocaleTimeString();
+        const div = document.createElement("div");
+        div.className = "log-item";
+        div.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-${type}">${message}</span>`;
+        logPanel.appendChild(div);
+        logPanel.scrollTop = logPanel.scrollHeight;
       }
 
-      let imageList = [];
-      const choice = imageSelect.value;
-      if (choice === 'botanical') imageList = [BOTANICAL_PUZZLE_SVG];
-      else if (choice === 'landscape') imageList = [LANDSCAPE_PUZZLE_SVG];
-      else if (choice === 'architecture') imageList = [ARCHITECTURE_PUZZLE_SVG];
-
-      addLog('info', 'Opening CAPTCHA modal...');
-
-      const captcha = createCaptcha({
-        tolerance: parseFloat(toleranceInput.value),
-        autoCloseDelay: parseInt(delayInput.value, 10),
-        images: imageList.length > 0 ? imageList : undefined,
-        onSuccess: (result) => {
-          addLog('success', `Verification SUCCESSFUL! Solved in ${(result.timeTakenMs / 1000).toFixed(2)}s (ID: ${result.puzzleId})`);
-        },
-        onFail: (diff) => {
-          addLog('fail', `Alignment incorrect: ${diff.toFixed(1)}° off target (tolerance is ${toleranceInput.value}°). Continue dragging!`);
-        },
-        onRefresh: (state) => {
-          addLog('info', `Puzzle refreshed! New random initial rotation: ${state.initialRotation.toFixed(1)}°`);
-        },
-        onClose: () => {
-          addLog('info', 'CAPTCHA modal dismissed.');
+      function openCaptcha() {
+        // If modal is already open, do not open duplicate
+        if (document.querySelector(".TUXModal.captcha-verify-container")) {
+          return;
         }
-      });
-    }
 
-    launchBtn.addEventListener('click', openCaptcha);
+        // Randomly select one of the three CAPTCHA images
+        const imageList = [
+          BOTANICAL_PUZZLE_SVG,
+          LANDSCAPE_PUZZLE_SVG,
+          ARCHITECTURE_PUZZLE_SVG,
+        ];
 
-    // Open the CAPTCHA modal automatically on first load
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', openCaptcha);
-    } else {
-      openCaptcha();
-    }
-  </script>
-</body>
+        const randomImage =
+          imageList[Math.floor(Math.random() * imageList.length)];
+
+        addLog("info", "Opening CAPTCHA modal...");
+
+        const captcha = createCaptcha({
+          tolerance: parseFloat(toleranceInput.value),
+          autoCloseDelay: parseInt(delayInput.value, 10),
+          images: [randomImage],
+          onSuccess: (result) => {
+            addLog(
+              "success",
+              `Verification SUCCESSFUL! Solved in ${(result.timeTakenMs / 1000).toFixed(2)}s (ID: ${result.puzzleId})`,
+            );
+          },
+          onFail: (diff) => {
+            addLog(
+              "fail",
+              `Alignment incorrect: ${diff.toFixed(1)}° off target (tolerance is ${toleranceInput.value}°). Continue dragging!`,
+            );
+          },
+          onRefresh: (state) => {
+            addLog(
+              "info",
+              `Puzzle refreshed! New random initial rotation: ${state.initialRotation.toFixed(1)}°`,
+            );
+          },
+          onClose: () => {
+            addLog("info", "CAPTCHA modal dismissed.");
+          },
+        });
+      }
+
+      launchBtn.addEventListener("click", openCaptcha);
+
+      // Open the CAPTCHA modal automatically on first load
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", openCaptcha);
+      } else {
+        openCaptcha();
+      }
+    </script>
+  </body>
 </html>
