@@ -266,14 +266,15 @@
           <div class="form-group">
             <label for="imageSelect">Image Theme:</label>
             <select id="imageSelect">
-              <option value="all">
-                All Themes (Botanical Still Life, Landscape, Architecture)
-              </option>
-              <option value="botanical">
-                Botanical Still Life (Reference Match)
-              </option>
+              <option value="all">All Themes (Random)</option>
+              <option value="botanical">Botanical Still Life</option>
               <option value="landscape">Alpine Landscape</option>
               <option value="architecture">Modern Architecture</option>
+              <option value="ocean">Ocean</option>
+              <option value="desert">Desert</option>
+              <option value="space">Space</option>
+              <option value="autumn">Autumn Forest</option>
+              <option value="neon-city">Neon City</option>
             </select>
           </div>
 
@@ -389,6 +390,11 @@
         BOTANICAL_PUZZLE_SVG,
         LANDSCAPE_PUZZLE_SVG,
         ARCHITECTURE_PUZZLE_SVG,
+        OCEAN_PUZZLE_SVG,
+        DESERT_PUZZLE_SVG,
+        SPACE_PUZZLE_SVG,
+        AUTUMN_PUZZLE_SVG,
+        NEON_CITY_PUZZLE_SVG,
       } from "./src/index";
 
       const launchBtn = document.getElementById("launchBtn");
@@ -427,6 +433,11 @@
           BOTANICAL_PUZZLE_SVG,
           LANDSCAPE_PUZZLE_SVG,
           ARCHITECTURE_PUZZLE_SVG,
+          OCEAN_PUZZLE_SVG,
+          DESERT_PUZZLE_SVG,
+          SPACE_PUZZLE_SVG,
+          AUTUMN_PUZZLE_SVG,
+          NEON_CITY_PUZZLE_SVG,
         ];
 
         const randomImage =
