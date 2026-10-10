@@ -448,7 +448,7 @@
         const captcha = createCaptcha({
           tolerance: parseFloat(toleranceInput.value),
           autoCloseDelay: parseInt(delayInput.value, 10),
-          images: [randomImage],
+          images: imageList,
           onSuccess: (result) => {
             addLog(
               "success",
