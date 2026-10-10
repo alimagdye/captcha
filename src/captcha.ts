@@ -48,6 +48,50 @@ function generateSessionId(): string {
   return `${dateStr}${hex}`;
 }
 
+const LAST_IMAGE_KEY = "captcha-last-image";
+
+
+
+function getImageKey(src: string | HTMLImageElement): string {
+  const value = typeof src === "string" ? src : src.src;
+
+  let hash = 0;
+
+  for (let i = 0; i < value.length; i++) {
+    hash = (Math.imul(hash, 31) + value.charCodeAt(i)) | 0;
+  }
+
+  return String(hash);
+}
+
+function choosePuzzleImage(
+  images: Array<string | HTMLImageElement>,
+): string | HTMLImageElement {
+  let lastImageKey: string | null = null;
+
+  try {
+    lastImageKey = localStorage.getItem("captcha-last-image");
+  } catch {
+    // Storage may be unavailable.
+  }
+
+  const candidates =
+    images.length > 1 && lastImageKey !== null
+      ? images.filter((image) => getImageKey(image) !== lastImageKey)
+      : images;
+
+  const pool = candidates.length > 0 ? candidates : images;
+  const selectedImage = pool[Math.floor(Math.random() * pool.length)];
+
+  try {
+    localStorage.setItem("captcha-last-image", getImageKey(selectedImage));
+  } catch {
+    // Continue without persistence.
+  }
+
+  return selectedImage;
+}
+
 /**
  * Generates a fresh puzzle state with randomized initial rotation.
  */
@@ -58,10 +102,24 @@ export async function generatePuzzle(
     options.images && options.images.length > 0
       ? options.images
       : DEFAULT_SVG_IMAGES;
-  const selectedSrc = images[imageIndexCounter % images.length];
-  imageIndexCounter++;
 
-  const loadedImg = await loadPuzzleImage(selectedSrc);
+  const selectedImage = choosePuzzleImage(images);
+
+  const loadedImg =
+    typeof selectedImage === "string"
+      ? await loadPuzzleImage(selectedImage)
+      : selectedImage;
+
+  if (!loadedImg.complete || loadedImg.naturalWidth === 0) {
+    await new Promise<void>((resolve, reject) => {
+      loadedImg.addEventListener("load", () => resolve(), { once: true });
+      loadedImg.addEventListener(
+        "error",
+        () => reject(new Error("Failed to load CAPTCHA image")),
+        { once: true },
+      );
+    });
+  }
   const targetRotation = 0;
   const initialRotation = generateRandomInitialRotation(35, targetRotation);
 

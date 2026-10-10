@@ -405,6 +405,17 @@
       const delayVal = document.getElementById("delayVal");
       const logPanel = document.getElementById("logPanel");
 
+      const imageThemes = {
+        botanical: BOTANICAL_PUZZLE_SVG,
+        landscape: LANDSCAPE_PUZZLE_SVG,
+        architecture: ARCHITECTURE_PUZZLE_SVG,
+        ocean: OCEAN_PUZZLE_SVG,
+        desert: DESERT_PUZZLE_SVG,
+        space: SPACE_PUZZLE_SVG,
+        autumn: AUTUMN_PUZZLE_SVG,
+        "neon-city": NEON_CITY_PUZZLE_SVG,
+      };
+
       toleranceInput.addEventListener("input", () => {
         toleranceVal.textContent = toleranceInput.value;
       });
@@ -414,70 +425,81 @@
       });
 
       function addLog(type, message) {
-        const time = new Date().toLocaleTimeString();
         const div = document.createElement("div");
+        const timeSpan = document.createElement("span");
+        const messageSpan = document.createElement("span");
+
         div.className = "log-item";
-        div.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-${type}">${message}</span>`;
+        timeSpan.className = "log-time";
+        timeSpan.textContent = `[${new Date().toLocaleTimeString()}] `;
+
+        messageSpan.className = `log-${type}`;
+        messageSpan.textContent = message;
+
+        div.append(timeSpan, messageSpan);
         logPanel.appendChild(div);
         logPanel.scrollTop = logPanel.scrollHeight;
       }
 
       function openCaptcha() {
-        // If modal is already open, do not open duplicate
         if (document.querySelector(".TUXModal.captcha-verify-container")) {
           return;
         }
 
-        // Randomly select one of the three CAPTCHA images
-        const imageList = [
-          BOTANICAL_PUZZLE_SVG,
-          LANDSCAPE_PUZZLE_SVG,
-          ARCHITECTURE_PUZZLE_SVG,
-          OCEAN_PUZZLE_SVG,
-          DESERT_PUZZLE_SVG,
-          SPACE_PUZZLE_SVG,
-          AUTUMN_PUZZLE_SVG,
-          NEON_CITY_PUZZLE_SVG,
-        ];
+        const selectedTheme = imageSelect.value;
 
-        const randomImage =
-          imageList[Math.floor(Math.random() * imageList.length)];
+        const images =
+          selectedTheme === "all"
+            ? Object.values(imageThemes)
+            : imageThemes[selectedTheme]
+              ? [imageThemes[selectedTheme]]
+              : Object.values(imageThemes);
 
         addLog("info", "Opening CAPTCHA modal...");
 
-        const captcha = createCaptcha({
-          tolerance: parseFloat(toleranceInput.value),
-          autoCloseDelay: parseInt(delayInput.value, 10),
-          images: imageList,
-          onSuccess: (result) => {
-            addLog(
-              "success",
-              `Verification SUCCESSFUL! Solved in ${(result.timeTakenMs / 1000).toFixed(2)}s (ID: ${result.puzzleId})`,
-            );
-          },
-          onFail: (diff) => {
-            addLog(
-              "fail",
-              `Alignment incorrect: ${diff.toFixed(1)}° off target (tolerance is ${toleranceInput.value}°). Continue dragging!`,
-            );
-          },
-          onRefresh: (state) => {
-            addLog(
-              "info",
-              `Puzzle refreshed! New random initial rotation: ${state.initialRotation.toFixed(1)}°`,
-            );
-          },
-          onClose: () => {
-            addLog("info", "CAPTCHA modal dismissed.");
-          },
-        });
+        try {
+          createCaptcha({
+            tolerance: Number(toleranceInput.value),
+            autoCloseDelay: Number(delayInput.value),
+            images,
+
+            onSuccess: (result) => {
+              addLog(
+                "success",
+                `Verification successful! Solved in ${(result.timeTakenMs / 1000).toFixed(2)}s (ID: ${result.puzzleId})`,
+              );
+            },
+
+            onFail: (diff) => {
+              addLog(
+                "fail",
+                `Incorrect alignment: ${diff.toFixed(1)}° off target. The puzzle will refresh.`,
+              );
+            },
+
+            onRefresh: (state) => {
+              addLog(
+                "info",
+                `Puzzle refreshed! Initial rotation: ${state.initialRotation.toFixed(1)}°`,
+              );
+            },
+
+            onClose: () => {
+              addLog("info", "CAPTCHA modal dismissed.");
+            },
+          });
+        } catch (error) {
+          console.error("Failed to open CAPTCHA:", error);
+          addLog("fail", "Failed to open CAPTCHA. Check the console.");
+        }
       }
 
       launchBtn.addEventListener("click", openCaptcha);
 
-      // Open the CAPTCHA modal automatically on first load
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", openCaptcha);
+        document.addEventListener("DOMContentLoaded", openCaptcha, {
+          once: true,
+        });
       } else {
         openCaptcha();
       }
